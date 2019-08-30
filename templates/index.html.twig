@@ -4,6 +4,6 @@
     Some content block is here.
 
     {% for row in data %}
-        {{ row }}
+        {% include 'include.html.twig' with {'row': row} %}
     {% endfor %}
 {% endblock %}

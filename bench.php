@@ -3,7 +3,7 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
-function benchmark(string $type, int $iterations = 100000)
+function benchmark(string $type, int $iterations = 10)
 {
     echo 'Benchmarking ' . $type . "\n";
 
