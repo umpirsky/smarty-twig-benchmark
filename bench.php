@@ -1,6 +1,10 @@
 #!/usr/bin/env php
 <?php
 
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
+use Twig\TemplateWrapper;
+
 require __DIR__ . '/vendor/autoload.php';
 
 function benchmark(string $type, int $iterations = 10)
@@ -44,22 +48,20 @@ function setup($type)
             $smarty->setCompileDir(__DIR__ . '/cache');
             return $smarty;
         case 'twig':
-            $loader = new Twig_Loader_Filesystem('templates');
-
-            return new Twig_Environment($loader, [
+            $loader = new FilesystemLoader('templates');
+            return new Environment($loader, [
                 'cache' => __DIR__ . '/cache',
                 'auto_reload' => false,
             ]);
 
         case 'twig_reuse':
-            $loader = new Twig_Loader_Filesystem('templates');
-
-            $env = new Twig_Environment($loader, [
+            $loader = new FilesystemLoader('templates');
+            $twig = new Environment($loader, [
                 'cache' => __DIR__ . '/cache',
                 'auto_reload' => false,
             ]);
 
-            return $env->load('index.html.twig');
+            return $twig->load('index.html.twig');
         default:
             throw new InvalidArgumentException('Unknown type');
     }
@@ -73,12 +75,12 @@ function benchmarkOnce($type, $instance, $data)
             $instance->assign($data);
             return $instance->fetch('index.html.smarty');
         case 'twig':
-            /** @var Twig_Environment $instance */
+            /** @var Environment $instance */
             $template = $instance->load('index.html.twig');
             return $template->render($data);
 
         case 'twig_reuse':
-            /** @var Twig_TemplateWrapper $instance */
+            /** @var TemplateWrapper $instance */
             return $instance->render($data);
         default:
             throw new InvalidArgumentException('Unknown type');
